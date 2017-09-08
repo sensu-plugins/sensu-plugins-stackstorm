@@ -1,0 +1,34 @@
+language: ruby
+cache:
+- bundler
+install:
+- bundle install
+rvm:
+- 2.0
+- 2.1
+- 2.2
+- 2.3.0
+- 2.4.1
+notifications:
+  email:
+    recipients:
+    - user.localhost2000@gmail.com
+    on_success: change
+    on_failure: always
+script:
+- bundle exec rake default
+- gem build sensu-plugins-stackstorm.gemspec
+- gem install sensu-plugins-stackstorm-*.gem
+deploy:
+  provider: rubygems
+  api_key:
+    secure: m6eh9IW8L2RCDzfFcnVNuWyr74ywhw+G+4WWwvTTUb7kp5cPu1dkqSeyVM8UobwKuFDwiJTh5rsGVfa2gTnPkaj7jaAWOVDAJcjs8q+oYxMob+dpe++eu3N1adbsqZC27wNH2AlfmIiuEohTHNTMYv6CTiIkr6OVkZCLeD1lLxx9+OyhNaxkb53hmPPgvADmvITK1ZKKyAKb43rCGrKV1/nQDFu+aL/+CmqlH0JLw7vYrx3uVFOmjoVmPWM5VWS1BO2xOZIJ2leInql85C4DK4K3FoqIDhAg+d1o5RqMEz9DvfLHhl2f2EWgHxGk2PyolVUu7JxIoPT1WgCQnKjZ4vOZZBpsdMLzjvnFJBHrFIp0wUTAUgDxHzCA16BKLEoZg0IMcPh+aVPd3jdVJg+RsUuhCr+5wZEsu8LB/LfKiLhSdaM70sjM6CsZXyfhrLFN809f32vGm/fFc3FOKy/ZHEDaVG2jIspcg2pwDwzaQ8wPYwsgp9q+RDpFF49zyk+5f9FjEyftcUwaZhzDb1WIvzQCKtR2dBNgooUZJKrCicyc/L409P1Q1XMeV7BFew+fXChteh4upbzYiqp1yile1EO3QDIDmHpPALh2CbWRwyCmpbn0y8ZfAE4YDs0Bd1V1rJqdsuUFJlEDw7coKrR9uPWzB66om8nlz3KQGfyva3I=
+  gem: sensu-plugins-stackstorm
+  on:
+    tags: true
+    all_branches: true
+    rvm: 2.4.1
+    repo: sensu-plugins/sensu-plugins-stackstorm
+addons:
+  code_climate:
+    repo_token: 
