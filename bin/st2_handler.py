@@ -25,6 +25,8 @@ except ImportError:
     raise ImportError('Missing dependency "pyyaml". \
         Do ``pip install pyyaml``.')
 
+import six
+
 # ST2 configuration
 
 ST2_API_BASE_URL = None  # 'https://localhost/api/v1/'
@@ -58,6 +60,36 @@ UNREACHABLE_CODES = [httplib.NOT_FOUND]
 
 TOKEN_AUTH_HEADER = 'X-Auth-Token'
 API_KEY_AUTH_HEADER = 'St2-Api-Key'
+
+
+class ConfigMeta(type):
+    def __getitem__(kls, key):
+        loaded_config = {}
+        for fpath in kls.get_config_files():
+            with open(fpath, 'r') as f:
+                loaded_config.update(json.loads(f.read()))
+
+        return loaded_config.get(key)
+
+
+class Config(six.with_metaclass(ConfigMeta)):
+    @classmethod
+    def get_config_files(kls):
+        config_files = []
+        if (os.environ.get('SENSU_LOADED_TEMPFILE') and
+            os.path.exists(os.environ.get('SENSU_LOADED_TEMPFILE'))):
+            open(os.environ.get('SENSU_LOADED_TEMPFILE'), 'r') with f:
+                config_files = f.read().split(':')
+            return config_files
+
+        elif os.environ.get('SENSU_CONFIG_FILES'):
+            return os.environ.get('SENSU_CONFIG_FILES').split(':')
+
+        else:
+            for basedir, _, files in os.walk('/etc/sensu'):
+                config_files.extend(['%s/%s' % (basedir, x) for x in files
+                                     if re.match(".*\.json$", x)])
+            return config_files
 
 
 def _get_sensu_request_headers():
