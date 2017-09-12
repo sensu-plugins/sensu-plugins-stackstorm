@@ -64,6 +64,27 @@ API_KEY_AUTH_HEADER = 'St2-Api-Key'
 
 
 class ConfigMeta(type):
+    def __getitem__(kls, key):
+        loaded_config = {}
+        for fpath in kls.get_config_files():
+            with open(fpath, 'r') as f:
+                loaded_config.update(json.loads(f.read()))
+
+        return loaded_config.get(key)
+
+    def __contains__(kls, key):
+        is_contains = False
+        for fpath in kls.get_config_files():
+            if is_contains:
+                break
+
+            with open(fpath, 'r') as f:
+                is_contains = key in json.loads(f.read())
+
+        return is_contains
+
+class ConfigBase(six.with_metaclass(ConfigMeta)):
+    @classmethod
     def get_config_files(kls):
         config_files = []
         if (os.environ.get('SENSU_LOADED_TEMPFILE') and
@@ -81,16 +102,14 @@ class ConfigMeta(type):
                                      if re.match(".*\.json$", x)])
             return config_files
 
-    def __getitem__(kls, key):
-        loaded_config = {}
-        for fpath in kls.get_config_files():
-            with open(fpath, 'r') as f:
-                loaded_config.update(json.loads(f.read()))
+    @classmethod
+    def get(kls, key, default=None):
+        if key not in kls:
+            return default
+        else:
+            return kls[key]
 
-        return loaded_config.get(key)
-
-
-class Config(six.with_metaclass(ConfigMeta)):
+class Config(ConfigBase):
     CONFIG_DIR_BASE = '/etc/sensu'
 
 
@@ -327,7 +346,7 @@ def _register_with_st2(verbose=False):
         sys.exit(2)
 
 
-def _set_config_opts(config_file, verbose=False, unauthed=False, ssl_verify=False):
+def _set_config_opts(verbose=False, unauthed=False, ssl_verify=False):
     global ST2_USERNAME
     global ST2_PASSWORD
     global ST2_API_KEY
@@ -346,29 +365,33 @@ def _set_config_opts(config_file, verbose=False, unauthed=False, ssl_verify=Fals
     UNAUTHED = unauthed
     ST2_SSL_VERIFY = ssl_verify
 
-    if not os.path.exists(config_file):
-        print('Configuration file %s not found. Exiting!!!' % config_file)
-        sys.exit(1)
+    # These are default configurations
+    config = {
+        'st2_username': '',
+        'st2_password': '',
+        'st2_api_key': '',
+        'st2_api_base_url': 'https://localhost/api/v1/',
+        'st2_auth_base_url': 'https://localhost/auth/v1',
+    }
 
-    with open(config_file) as f:
-        config = yaml.safe_load(f)
+    config.update(Config.get('st2_handler', {}))
 
-        if verbose:
-            print('Contents of config file: %s' % config)
+    if verbose:
+        print('Contents of config file: %s' % config)
 
-        ST2_USERNAME = config['st2_username']
-        ST2_PASSWORD = config['st2_password']
-        ST2_API_KEY = config['st2_api_key']
-        ST2_API_BASE_URL = config['st2_api_base_url']
-        if not ST2_API_BASE_URL.endswith('/'):
-            ST2_API_BASE_URL += '/'
-        ST2_AUTH_BASE_URL = config['st2_auth_base_url']
-        if not ST2_AUTH_BASE_URL.endswith('/'):
-            ST2_AUTH_BASE_URL += '/'
-        SENSU_HOST = config.get('sensu_host', 'localhost')
-        SENSU_PORT = config.get('sensu_port', '4567')
-        SENSU_USER = config.get('sensu_user', None)
-        SENSU_PASS = config.get('sensu_pass', None)
+    ST2_USERNAME = config['st2_username']
+    ST2_PASSWORD = config['st2_password']
+    ST2_API_KEY = config['st2_api_key']
+    ST2_API_BASE_URL = config['st2_api_base_url']
+    if not ST2_API_BASE_URL.endswith('/'):
+        ST2_API_BASE_URL += '/'
+    ST2_AUTH_BASE_URL = config['st2_auth_base_url']
+    if not ST2_AUTH_BASE_URL.endswith('/'):
+        ST2_AUTH_BASE_URL += '/'
+    SENSU_HOST = Config['api'].get('host', 'localhost')
+    SENSU_PORT = Config['api'].get('port', '4567')
+    SENSU_USER = Config['api'].get('user', None)
+    SENSU_PASS = Config['api'].get('password', None)
 
     if ST2_API_KEY:
         IS_API_KEY_AUTH = True
@@ -390,17 +413,14 @@ def _set_config_opts(config_file, verbose=False, unauthed=False, ssl_verify=Fals
             sys.exit(1)
 
 
-def main(config_file, payload, verbose=False, unauthed=False, ssl_verify=False):
-    _set_config_opts(config_file=config_file, unauthed=unauthed, verbose=verbose,
-                     ssl_verify=ssl_verify)
+def main(payload, verbose=False, unauthed=False, ssl_verify=False):
+    _set_config_opts(unauthed=unauthed, verbose=verbose, ssl_verify=ssl_verify)
     _register_with_st2(verbose=verbose)
     _post_event_to_st2(payload, verbose=verbose)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='StackStorm sensu event handler.')
-    parser.add_argument('config_path',
-                        help='Exchange to listen on')
     parser.add_argument('--verbose', '-v', required=False, action='store_true',
                         help='Verbose mode.')
     parser.add_argument('--unauthed', '-u', required=False, action='store_true',
@@ -410,5 +430,4 @@ if __name__ == '__main__':
                         help='Turn on SSL verification for st2 APIs.')
     args = parser.parse_args()
     payload = sys.stdin.read().strip()
-    main(config_file=args.config_path, payload=payload, verbose=args.verbose,
-         unauthed=args.unauthed, ssl_verify=args.ssl_verify)
+    main(payload=payload, verbose=args.verbose, unauthed=args.unauthed, ssl_verify=args.ssl_verify)
