@@ -8,8 +8,8 @@ require "sensu-plugins-stackstorm/version"
 Gem::Specification.new do |spec|
   spec.name          = "sensu-plugins-stackstorm"
   spec.version       = SensuPluginsStackStorm::VERSION
-  spec.authors       = ["Hiroyasu OHYAMA"]
-  spec.email         = ["user.localhost2000@gmail.com"]
+  spec.authors       = ["StackStorm, Inc.", "Hiroyasu OHYAMA"]
+  spec.email         = ["info@stackstorm.com", "user.localhost2000@gmail.com"]
 
   spec.summary       = %q{Sensu plugins for StackStorm}
   spec.description   = %q{}
