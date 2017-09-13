@@ -367,11 +367,11 @@ def _set_config_opts(verbose=False, unauthed=False, ssl_verify=False):
 
     # These are default configurations
     config = {
-        'st2_username': '',
-        'st2_password': '',
+        'st2_username': 'st2admin',
+        'st2_password': 'password',
         'st2_api_key': '',
-        'st2_api_base_url': 'https://localhost/api/v1/',
-        'st2_auth_base_url': 'https://localhost/auth/v1',
+        'st2_api_base_url': 'http://localhost:9101/v1/',
+        'st2_auth_base_url': 'http://localhost:9100/',
     }
 
     config.update(Config.get('st2_handler', {}))
