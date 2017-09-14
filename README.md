@@ -5,7 +5,7 @@
 
 ## Files
 
-* st2_handler.py
+* st2_handler.rb
 
 # Installation
 You can easily install this pack using [sensu-install](https://sensuapp.org/docs/latest/reference/plugins.html#installing-sensu-plugins) as following.
@@ -34,13 +34,13 @@ This is the configuration parameters that st2_handler refers.
 
 | parameter         | description | default value |
 |:------------------|:------------|:--------------|
-| st2_username      | Username that is authenticated by the StackStorm to access to it | `st2admin` |
+| st2_username      | Username that is authenticated by the StackStorm| `st2admin` |
 | st2_password      | Password that corresponds to the Username to be authenticated | `password` |
 | st2_api_key       | API Key value to authenticate API access (see also: [api-keys](https://docs.stackstorm.com/authentication.html#api-keys))|  |
 | st2_api_base_url  | The base URL to access to the [st2api](https://docs.stackstorm.com/reference/ha.html#st2api) | `http://localhost:9101/v1/` |
 | st2_auth_base_url | The base URL to access to the [st2auth](https://docs.stackstorm.com/reference/ha.html#st2auth) | `http://localhost:9100/` |
 
-You can set these configuration as following.
+You can set these configurations in a Sensu configuration source file (e.g. `/etc/sensu/conf.d/st2_handler.json`) as following.
 
 ```JSON
 {
@@ -53,7 +53,7 @@ You can set these configuration as following.
   }
 }
 ```
-
+(see also: [sensu-configuration-source](https://sensuapp.org/docs/latest/reference/configuration.html#sensu-configuration-sources))
 
 ### Confirmation
 After installing this plugin by `sensu-install` command, you can manually dispatch StackStorm trigger `sensu.event_handler` of [Sensu pack](https://github.com/StackStorm-Exchange/stackstorm-sensu) with the message of [Sensu Events](https://sensuapp.org/docs/latest/reference/events.html) for confirmation the normality. If the setup goes well, you can get following result.
