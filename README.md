@@ -1,5 +1,5 @@
 # Sensu-Plugins-StackStorm
-[![Build Status](https://travis-ci.org/userlocalhost/sensu-plugins-stackstorm.svg?branch=master)](https://travis-ci.org/userlocalhost/sensu-plugins-stackstorm)
+[![Build Status](https://travis-ci.org/sensu-plugins/sensu-plugins-stackstorm.svg?branch=master)](https://travis-ci.org/sensu-plugins/sensu-plugins-stackstorm)
 
 # Functionality
 
