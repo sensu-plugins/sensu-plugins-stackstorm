@@ -13,22 +13,25 @@ notifications:
   email:
     recipients:
     - user.localhost2000@gmail.com
+    - sensu-plugin@sensu-plugins.io
     on_success: change
     on_failure: always
 script:
-- bundle exec rake default
 - gem build sensu-plugins-stackstorm.gemspec
 - gem install sensu-plugins-stackstorm-*.gem
+- bundle exec rake default
 deploy:
   provider: rubygems
   api_key:
-    secure: VOa8Z+OVR0PTo0Vu2JKc/ID8gwSO7K8KT9HJQHBJsXTialfkQTCt3qhvYu5SU6ZHAk5g7PuFAOOUgAoJjYqLGRdMZnHIG1dwLcPzWOARLgtFE4hxqr923IdOn/QrJQ/8bdYCgpF3LLZAaHt4CCOjIIghB9HrbOeW9CD2ioD2UUY1Mrm22BhMnaKNWbfxYXla80rbEkM5TarGQpIvCZO7gHd5HewHApPlxh5+PjTdaGPPabO/Q1Q38nYXwfKTJoMCDeeGUMjqZiD3lO9mc18SCCl9uY0JQtepacNL5oRM6GIG4Tse+1lmVgZCSO7oIh2Z/jOyCKl/bd3mdpcUQt2KIskJbR+7cdWO6KwwcPIT5CUrkjyT0ut49RK0tsRJKgCZuv5I4ppRb0YVkpHXQNETh4ptO1uccrE9w3PubsfkLSoiuAnBv7X1t3/dZ943GjULm+KNw/uK9ebpcv1WWxLzFFqHOfbU/H7dC9On6Yp1M+COvhBhwRecv3o2yDFHfVwMq0CXv0GS+inachEseiT0N9D3S1wOnmZbBWx1WvGY4p+5XF3lscZcZxZzbCNkusW46OPm7mkwt3koBG7mz8uJgnE0mQgXydGxgJLI7vJ4x2cbohrt3Ktg4VhQN3QfXCwClYW83dwlYor+yRlhclXGiYd4hNSNLOmzGKHXR507QPU=
+    secure: J/uQ6lHtc5q8ICBuyHk0ND6F3rA4U1mt7Vq/wGmGJxVqpD0G99p5AXeZ7qUqQEGZxMSBsWToDwd90sw5GK9PnI/MlUiXs2RiIJ92wIXJ7+TedPEtA82CYO6ANTRclooFjYXrf5E0H881PZHmDeMGtmCtwTLEVJqDhNBN1hDdCq2+TpMw5wDBl/7p623kHQyk+iPuxsLjk7W+QU0EFQxq+xE2rVaI/fnvn12nkUgqV30PRVNM8RNq6CoDHmLUDtOCusNyQuAL4mXW03303m3QCh5M3DJ/tE0wal5p1oQXyZJNeHi3rLHasbTTicWabhskhItAv/LnCFXso5GdtB/XJ7WOo39eOYhnalP9M3UGwbN5f4rVJKlcRKJK60ij8ELKTqP9+48XubmUGwVXpdpVGuPtj2W3ULOZLyNK9gq+fzzB/yUcU6lPnEV/Q0dJ1OXtBMiml5/DILWXeG33Oq/f6ZLRVAil3Rg0C3LSGPNEMWf98ok1OZQRw9cBNEsgUNjG5eJba4/dEDAp/ytnXcpW3etZvG2kx889NNkBtofVGozzsR6uEUIMzBuwmnZgE4ewXBWWReSm/8HB4v0uO4tZjHKUESce+li7Qx+vknRbA3O2vc7fBXKbVmpHPNgjuPmClqcdyPQ1U6DrS18JMppHWbzN3RI+n5RWFX5Acw3TtF8=
   gem: sensu-plugins-stackstorm
   on:
     tags: true
     all_branches: true
+    rvm: 2.2
+    rvm: 2.3.0
     rvm: 2.4.1
-    repo: userlocalhost/sensu-plugins-stackstorm
+    repo: sensu-plugins/sensu-plugins-stackstorm
 addons:
   code_climate:
-    repo_token: 
+    repo_token:

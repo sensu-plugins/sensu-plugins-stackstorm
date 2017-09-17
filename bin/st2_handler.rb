@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
-require "sensu-plugins-stackstorm"
+require 'sensu-plugins-stackstorm'
 
-SensuPluginsStackStorm::Command.run_python *ARGV
+SensuPluginsStackStorm::Command.run_python(*ARGV)
